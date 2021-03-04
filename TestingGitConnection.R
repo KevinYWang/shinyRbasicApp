@@ -1,5 +1,6 @@
-options(shiny.maxRequestSize = 790*1024^2)
-# install.packages('shiny')
+options(shiny.maxRequestSize = 790 * 1024 ^ 2)
+
+library(lattice)
 library(shiny)
 
 baseUI <- fluidPage(titlePanel(h2('My Shiny Demo App')),
@@ -30,8 +31,8 @@ baseUI <- fluidPage(titlePanel(h2('My Shiny Demo App')),
                         selectInput(
                           inputId = 'plotSelector',
                           label = 'Your plot choice:',
-                          list('Histogram', 'Scatterplot', 'Boxplot'),
-                          selected = 'Histogram',
+                          list('','Histogram', 'Scatterplot', 'Boxplot'),
+                          # selected = 'Histogram',
                           multiple = F
                         ),
                         h4('Choose corresponding variables'),
@@ -67,7 +68,6 @@ baseUI <- fluidPage(titlePanel(h2('My Shiny Demo App')),
 
 
 baseServer <- shinyServer(function(input, output) {
-  
   output$plotTitleOutput  <- renderText({
     paste(input$plotTitle)
   })
@@ -103,6 +103,22 @@ baseServer <- shinyServer(function(input, output) {
         multiple = F
       )
     )
+  })
+  output$plotHolder <- renderPlot({
+    if(is.null(plotData)){
+      return()
+    }
+
+    ### Histogram ###
+    # if(input$plotSelector == 'Histogram'){
+    #   histogram( ~ plotData()[, which(names(plotData())==input$x)],
+    #             data = plotData(), xlab = input$x) 
+    # }
+
+    if (input$plotSelector == "Histogram") {
+      histogram( ~ plotData()[,which(names(plotData())==input$x)], data=plotData(), xlab=input$x)
+    }
+    
   })
 })
 
