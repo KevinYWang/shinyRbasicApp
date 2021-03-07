@@ -2,8 +2,11 @@ options(shiny.maxRequestSize = 790 * 1024 ^ 2)
 
 library(lattice)
 library(shiny)
+library(shinythemes)
 
-baseUI <- fluidPage(titlePanel(h2('My Shiny Demo App')),
+
+baseUI <- fluidPage(theme = shinytheme('cyborg'),
+                    titlePanel(h2('My Shiny Demo App')),
                     sidebarLayout(
                       sidebarPanel(
                         ## common control demo:
@@ -31,7 +34,7 @@ baseUI <- fluidPage(titlePanel(h2('My Shiny Demo App')),
                         selectInput(
                           inputId = 'plotSelector',
                           label = 'Your plot choice:',
-                          list('','Histogram', 'Scatterplot', 'Boxplot'),
+                          list('', 'Histogram', 'Scatterplot', 'Boxplot'),
                           # selected = 'Histogram',
                           multiple = F
                         ),
@@ -55,22 +58,21 @@ baseUI <- fluidPage(titlePanel(h2('My Shiny Demo App')),
                         )
                         
                       ),
-                      mainPanel(
-                        width = 8,
-                        tabsetPanel(type = 'tabs',
-                          tabPanel('Plot',
-                                   strong(h4(textOutput('plotTitleOutput'))),
-                                   plotOutput(
-                                     outputId = 'plotHolder',
-                                     height = 300,
-                                     width = 'auto'
-                                   )
-                                   ),
-                          tabPanel('Dataset',
-                                   tableOutput('dataset'))
-                        )
-                        
-                      )
+                      mainPanel(width = 8,
+                                tabsetPanel(
+                                  type = 'tabs',
+                                  tabPanel(
+                                    'Plot',
+                                    strong(h4(textOutput('plotTitleOutput'))),
+                                    plotOutput(
+                                      outputId = 'plotHolder',
+                                      height = 300,
+                                      width = 'auto'
+                                    )
+                                  ),
+                                  tabPanel('Dataset',
+                                           tableOutput('dataset'))
+                                ))
                     ))
 
 
@@ -112,35 +114,46 @@ baseServer <- shinyServer(function(input, output) {
     )
   })
   output$plotHolder <- renderPlot({
-    if(is.null(plotData)){
+    if (is.null(plotData)) {
       return()
     }
-
+    
     ### Histogram ###
     # if(input$plotSelector == 'Histogram'){
     #   histogram( ~ plotData()[, which(names(plotData())==input$x)],
-    #             data = plotData(), xlab = input$x) 
+    #             data = plotData(), xlab = input$x)
     # }
-
+    
     #handling three types: 'Histogram', 'Scatterplot', 'Boxplot'
     if (input$plotSelector == "Histogram") {
-      histogram( ~ plotData()[,which(names(plotData())==input$x)], data=plotData(), xlab=input$x)
+      histogram(~ plotData()[, which(names(plotData()) == input$x)], data = plotData(), xlab =
+                  input$x)
     }
     
     else if (input$plotSelector == "Scatterplot") {
-      xyplot(plotData()[,which(names(plotData())==input$y)]~
-             plotData()[,which(names(plotData())==input$x)], data=plotData(),
-             xlab=input$x, ylab=input$y)
+      xyplot(
+        plotData()[, which(names(plotData()) == input$y)] ~
+          plotData()[, which(names(plotData()) == input$x)],
+        data = plotData(),
+        xlab = input$x,
+        ylab = input$y
+      )
     }
-
-    else if (input$plotSelector == "Boxplot") {
-      bwplot(plotData()[,which(names(plotData())==input$y)]~
-             plotData()[,which(names(plotData())==input$x)], data=plotData(),
-             xlab=input$x,ylab=input$y)
-    }
-
     
-  }, height = function(x) input$plotHeight, width = function(y) input$plotWidth)
+    else if (input$plotSelector == "Boxplot") {
+      bwplot(
+        plotData()[, which(names(plotData()) == input$y)] ~
+          plotData()[, which(names(plotData()) == input$x)],
+        data = plotData(),
+        xlab = input$x,
+        ylab = input$y
+      )
+    }
+    
+    
+  }, height = function(x)
+    input$plotHeight, width = function(y)
+      input$plotWidth)
   output$dataset <- renderTable({
     plotData()
   })
