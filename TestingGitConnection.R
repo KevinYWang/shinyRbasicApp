@@ -57,12 +57,19 @@ baseUI <- fluidPage(titlePanel(h2('My Shiny Demo App')),
                       ),
                       mainPanel(
                         width = 8,
-                        strong(h4(textOutput('plotTitleOutput'))),
-                        plotOutput(
-                          outputId = 'plotHolder',
-                          height = 300,
-                          width = 'auto'
+                        tabsetPanel(type = 'tabs',
+                          tabPanel('Plot',
+                                   strong(h4(textOutput('plotTitleOutput'))),
+                                   plotOutput(
+                                     outputId = 'plotHolder',
+                                     height = 300,
+                                     width = 'auto'
+                                   )
+                                   ),
+                          tabPanel('Dataset',
+                                   tableOutput('dataset'))
                         )
+                        
                       )
                     ))
 
@@ -134,6 +141,9 @@ baseServer <- shinyServer(function(input, output) {
 
     
   }, height = function(x) input$plotHeight, width = function(y) input$plotWidth)
+  output$dataset <- renderTable({
+    plotData()
+  })
 })
 
 
