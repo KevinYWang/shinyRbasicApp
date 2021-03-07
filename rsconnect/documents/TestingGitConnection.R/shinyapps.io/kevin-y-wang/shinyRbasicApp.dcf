@@ -1,0 +1,12 @@
+name: shinyRbasicApp
+title: shinyRbasicApp
+username:
+account: kevin-y-wang
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3748537
+bundleId: 4310922
+url: https://kevin-y-wang.shinyapps.io/shinyRbasicApp/
+when: 1615088455.7108
+asMultiple: FALSE
+asStatic: FALSE

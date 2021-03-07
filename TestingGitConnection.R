@@ -42,15 +42,15 @@ baseUI <- fluidPage(titlePanel(h2('My Shiny Demo App')),
                         numericInput(
                           inputId = 'plotHeight',
                           label = 'Height',
-                          value = 700,
-                          min = 500,
+                          value = 400,
+                          min = 400,
                           max = 2000
                         ),
                         numericInput(
                           inputId = 'plotWidth',
                           label = 'Width',
-                          value = 900,
-                          min = 500,
+                          value = 400,
+                          min = 400,
                           max = 2000
                         )
                         
@@ -60,7 +60,7 @@ baseUI <- fluidPage(titlePanel(h2('My Shiny Demo App')),
                         strong(h4(textOutput('plotTitleOutput'))),
                         plotOutput(
                           outputId = 'plotHolder',
-                          height = 'auto',
+                          height = 300,
                           width = 'auto'
                         )
                       )
@@ -115,11 +115,25 @@ baseServer <- shinyServer(function(input, output) {
     #             data = plotData(), xlab = input$x) 
     # }
 
+    #handling three types: 'Histogram', 'Scatterplot', 'Boxplot'
     if (input$plotSelector == "Histogram") {
       histogram( ~ plotData()[,which(names(plotData())==input$x)], data=plotData(), xlab=input$x)
     }
     
-  })
+    else if (input$plotSelector == "Scatterplot") {
+      xyplot(plotData()[,which(names(plotData())==input$y)]~
+             plotData()[,which(names(plotData())==input$x)], data=plotData(),
+             xlab=input$x, ylab=input$y)
+    }
+
+    else if (input$plotSelector == "Boxplot") {
+      bwplot(plotData()[,which(names(plotData())==input$y)]~
+             plotData()[,which(names(plotData())==input$x)], data=plotData(),
+             xlab=input$x,ylab=input$y)
+    }
+
+    
+  }, height = function(x) input$plotHeight, width = function(y) input$plotWidth)
 })
 
 
